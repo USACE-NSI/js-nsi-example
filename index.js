@@ -77,10 +77,19 @@ class FeatureCollectionStore {
 }
 
 async function downloadNSIJson() {
-    const url = 'https://nsi.sec.usace.army.mil/nsiapi/structures?bbox=-81.58418,30.25165,-81.58161,30.26939,-81.55898,30.26939,-81.55281,30.24998,-81.58418,30.25165';
-    
+    const url = "https://www.hec.usace.army.mil/fwlink/?linkid=1&type=string";//'https://nsi.sec.usace.army.mil/nsiapi/structures?bbox=-81.58418,30.25165,-81.58161,30.26939,-81.55898,30.26939,-81.55281,30.24998,-81.58418,30.25165';
+    let nsiurl = "";
     try {
-      const response = await fetch(url);
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        nsiurl = await response.text() + "structures?bbox=-81.58418,30.25165,-81.58161,30.26939,-81.55898,30.26939,-81.55281,30.24998,-81.58418,30.25165";
+    }catch (error) {
+        console.error('fwlink failed:', error);
+    }
+    try {
+      console.log("Downloading structures from: " +  nsiurl)
+      const response = await fetch(nsiurl);
       if (!response.ok) throw new Error('Network response was not ok');
       
       const data = await response.json();
